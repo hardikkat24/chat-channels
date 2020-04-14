@@ -25,7 +25,7 @@ SECRET_KEY = 'uwpb8zu7wg#pp(i%@^cym(wis2-z$s=bise9^)8itbiq3_e*y*'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'app_chat_channels',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -50,6 +53,7 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'project_chat_channels.urls'
+ASGI_APPLICATION = "project_chat_channels.routing.application"
 
 TEMPLATES = [
     {
@@ -118,3 +122,13 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+            # "hosts": [os.environment.get('REDIS_URL', 'redis://localhost:6379')],
+        },
+    },
+}
