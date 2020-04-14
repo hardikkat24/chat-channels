@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}
+Signup
+{% endblock %}
+
+{% block content %}
+<form method = "POST">
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+
+    {% for h in forms.hidden_fields %}
+    {{ h.errors }}
+    {{ h }}
+    {% endfor %}
+
+    <table>
+        {% for f in form.visible_fields %}
+
+        <tr>
+            <td>{{ f.label }}</td>
+            <td>
+                {{ f }}
+                {{ f.errors }}
+                {{ f.help_text }}
+            </td>
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+    <button type = "submit">Submit</button>
+
+</form>
+{% endblock %}

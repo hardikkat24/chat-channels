@@ -1,9 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic.edit import FormMixin
 from django.views.generic import DetailView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseForbidden
 from django.urls import reverse
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib import messages
 
 from .forms import ComposeForm
 from .models import Thread, ChatMessage
@@ -78,4 +80,21 @@ def thread_view(request, username):
     }
 
     return render(request, "thread.html", context)
+
+
+def signup(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Account successfully created")
+            return redirect('login')
+
+    else:
+        form = UserCreationForm()
+        context = {
+            'form': form,
+        }
+
+    return render(request, "signup.html", context)
 

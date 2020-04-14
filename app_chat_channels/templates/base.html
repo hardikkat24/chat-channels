@@ -8,6 +8,9 @@
 </head>
 
 <body>
+{% if user.is_authenticated %}
+<a href = "{% url 'logout' %}">Log Out</a>
+{% endif %}
 
 {% if messages %}
 {% for m in messages %}

@@ -13,28 +13,29 @@ class ThreadManager(models.Manager):
 
     def get_or_create(self, user, other_username):
         # user is object but other_username not user object
-        username = user.username
-        if username == other_username:
-            return None
-        lookup1 = Q(first__username=username) & Q(second__username=other_username)
-        lookup2 = Q(first__username=other_username) & Q(second__username=username)
-        qset = self.get_queryset().filter(lookup1 | lookup2).distinct()
+        if user.is_authenticated:
+            username = user.username
+            if username == other_username:
+                return None
+            lookup1 = Q(first__username=username) & Q(second__username=other_username)
+            lookup2 = Q(first__username=other_username) & Q(second__username=username)
+            qset = self.get_queryset().filter(lookup1 | lookup2).distinct()
 
-        if qset.count() == 1:
-            return qset.first(), False
-        elif qset.count() > 1:
-            return qset.order_by('timestamp').first(), False
-        else:
-            c = user.__class__
-            user2 = c.objects.get(username=other_username)
-            if user != user2:
-                obj = self.model(
-                    first=user,
-                    second=user2
-                )
-                obj.save()
-                return obj, True
-            return None, False
+            if qset.count() == 1:
+                return qset.first(), False
+            elif qset.count() > 1:
+                return qset.order_by('timestamp').first(), False
+            else:
+                c = user.__class__
+                user2 = c.objects.get(username=other_username)
+                if user != user2:
+                    obj = self.model(
+                        first=user,
+                        second=user2
+                    )
+                    obj.save()
+                    return obj, True
+                return None, False
 
 
 class Thread(models.Model):
@@ -55,8 +56,6 @@ class Thread(models.Model):
             return True
         return False
     """
-
-
 
 
 class ChatMessage(models.Model):

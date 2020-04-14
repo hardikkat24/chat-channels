@@ -10,22 +10,24 @@ from .models import Thread, ChatMessage
 class ChatConsumer(AsyncConsumer):
     async def websocket_connect(self, event):
         print("connected", event)
-
-        # using url to get value
-        other_user = self.scope['url_route']['kwargs']['username']
         me = self.scope['user']
-        thread_obj = await self.get_thread(me, other_user)
-        self.thread_obj = thread_obj
-        print(thread_obj)
-        chat_room = f"thread_{thread_obj.id}"
-        self.chat_room = chat_room
-        await self.channel_layer.group_add(
-            chat_room,
-            self.channel_name
-        )
-        await self.send({
-                "type": "websocket.accept"
-        })
+        other_user = self.scope['url_route']['kwargs']['username']
+        # using url to get value
+        if me and other_user:
+
+
+            thread_obj = await self.get_thread(me, other_user)
+            self.thread_obj = thread_obj
+            print(thread_obj)
+            chat_room = f"thread_{thread_obj.id}"
+            self.chat_room = chat_room
+            await self.channel_layer.group_add(
+                chat_room,
+                self.channel_name
+            )
+            await self.send({
+                    "type": "websocket.accept"
+            })
 
 
     async def websocket_receive(self, event):
